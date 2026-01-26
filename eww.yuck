@@ -1,0 +1,219 @@
+;; Date variable that updates every minute
+(defpoll date :interval "1m"
+  "date '+%d.%m.%y'")
+
+; (defpoll audio_bars :interval "200ms" 
+;   "./cava.sh")
+(deflisten audio_bars
+  :initial "[0,0,0,0,0,0,0,0,0,0]"
+  "./cava-listen.sh")
+
+;; Time variable that updates every second
+(defpoll time :interval "1s"
+  "date '+%H:%M'")
+
+;; Number of running processes
+(defpoll processes :interval "10s"
+  "ps aux | wc -l")
+
+;; GPU usage polling (updates every 10 seconds) - assumes NVIDIA GPU
+(defpoll gpu_usage :interval "10s"
+  "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits 2>/dev/null || echo '0'")
+
+;; GPU memory usage
+(defpoll gpu_mem :interval "10s"
+  "nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits 2>/dev/null || echo '0'")
+
+;; GPU total memory
+(defpoll gpu_mem_total :interval "10s"
+  "nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits 2>/dev/null || echo '0'")
+
+  (defpoll media :interval "1s"
+  "./player.sh")
+
+;; Time widget window
+(defwindow desktop-widget
+  :stacking "bg"
+  :monitor 0
+  :windowtype "desktop"
+  :wm-ignore true
+  :geometry (geometry :x "50%"
+                      :y "4%"
+                      :anchor "bottom center"
+                      :height "320px")
+  (box :class "system-monitor-container"
+       :orientation "v"
+       :valign "center"
+       :halign "center"
+       :space-evenly false
+       :spacing 20
+    ;; Time and Date
+    (box :class "time-container"
+         :orientation "v"
+         :space-evenly false
+      (label :class "time-label"
+             :text time) 
+      (label :class "date-label"
+             :text date))
+    
+    ;; Graphs in horizontal layout
+    (box :class "graphs-row"
+         :orientation "h"
+         :space-evenly false
+         :spacing 40
+      
+      ;; CPU Graph
+      (box :class "graph-container"
+           :orientation "v"
+           :space-evenly false
+           :spacing 5
+        (label :class "graph-container__title" 
+           :text "CPU")
+        (box :class "graph-container__box"
+          (graph :class "cpu-graph"
+                 :value {EWW_CPU.avg}
+                 :thickness 1
+                 :time-range "30s"
+                 :width 200
+                 :height 40
+                 :min 0
+                 :max 100
+                 :dynamic true
+                 :line-style "round"))
+        (label :class "graph-container__label" 
+               :text "${processes} Processes (${round(EWW_CPU.avg, 0)}% utilised)"))
+        
+      ;; CPU Graph
+      (box :class "graph-container"
+          :orientation "v"
+          :space-evenly false
+          :spacing 5
+        (label :class "graph-container__title" 
+          :text "RAM")
+        (box :class "graph-container__box"
+          (graph :class "cpu-graph"
+                :value {EWW_RAM.used_mem_perc}
+                :thickness 1
+                :time-range "30s"
+                :width 200
+                :height 40
+                :min 0
+                :max 100
+                :dynamic true
+                :line-style "round"))
+        (label :class "graph-container__label" 
+              :text "${round(EWW_RAM.used_mem / 1024 / 1024 / 1024, 1)} GiB / ${round(EWW_RAM.total_mem / 1024 / 1024 / 1024, 1)} GiB (${round(EWW_RAM.used_mem_perc, 0)}% utilised)"))
+      
+      ;; GPU Graph
+      (box :class "graph-container"
+          :orientation "v"
+          :space-evenly false
+          :spacing 5
+        (label :class "graph-container__title" 
+          :text "GPU")
+        (box :class "graph-container__box"
+          (graph :class "gpu-graph"
+                :value gpu_usage
+                :thickness 1
+                :time-range "30s"
+                :width 200
+                :height 40
+                :min 0
+                :max 100
+                :dynamic true
+                :line-style "round"))
+        (label :class "graph-container__label" 
+              :text "${gpu_mem} MiB / ${gpu_mem_total} MiB (${gpu_usage}% utilised)"))
+      )))
+
+;; Media player window
+(defwindow media-player
+  :stacking "bg"
+  :monitor 0
+  :windowtype "normal"
+  :wm-ignore true
+  :geometry (geometry :x "20px"
+                      :y "20px"
+                      :anchor "top right"
+                      :width "600px"
+                      :height "120px")
+
+                      
+  (revealer :reveal {media.status != "NO_PLAYER"}
+    :transition "crossfade"                    
+    (box :class "media-player-container"
+      :orientation "h"
+      :space-evenly false
+      :spacing 15
+                        
+      ;; Metadata (only show cover art when not empty)
+      (revealer :reveal {media.artUrl != ""}
+        :transition "slideright"
+        ;; Album art
+        (box :class "media-info__cover-art"
+          :style "background: url('${media.artUrl}') center/cover no-repeat;"
+              :width 150
+              :height 150))
+        
+        (box :class "media-info"
+              :orientation "v"
+              :space-evenly false
+              :spacing 5
+              :valign "center"
+          (box :orientation "h" :space-evenly false :spacing 5
+            (label :class "media-info__italic" :text "STATUS:" :xalign 0)
+            (label :text "${media.status}" :xalign 0 :limit-width 20 :truncate true))  
+          (box :orientation "h" :space-evenly false :spacing 5
+            (label :class "media-info__italic" :text "TRACK:" :xalign 0)
+            (label :text "${media.title}" :xalign 0 :limit-width 20 :truncate true))
+          (box :orientation "h" :space-evenly false :spacing 5
+            (label :class "media-info__italic" :text "ARTIST:" :xalign 0)
+            (label :text "${media.artist}" :xalign 0 :limit-width 20 :truncate true))
+          (box :orientation "h" :space-evenly false :spacing 5
+            (label :class "media-info__italic" :text "ALBUM:" :xalign 0)
+            (label :text "${media.album}" :xalign 0 :limit-width 20 :truncate true))
+          
+          ;; Progress bar
+          (box :class "progress-container"
+                :orientation "v"
+                :space-evenly false
+                :spacing 5
+
+            (progress :class "progress-bar"
+                :value {media.lengthSec > 0 ? (media.positionSec / media.lengthSec) * 100 : 0}
+                :orientation "h")
+
+            (box :orientation "h"
+              :space-evenly true
+
+              (label :class "progress-time"
+                :text "${media.position}"
+                :xalign 0
+                :halign "start")
+                
+              (label :class "progress-time"
+                :text "${media.length}"
+                :xalign 0
+                :halign "end")
+            )
+          )
+        )
+
+        ;; audio
+        (box :class "audio-visualiser"
+             :height 150
+             :width 200
+             :spacing 4
+             :orientation "h"
+             :valign "center"
+          (for bar in audio_bars
+              (box :class "audio-visualiser-bar"
+                :valign "end"
+                :style "min-height: ${bar}px;"
+                :width 6)
+             
+          )
+        )
+    )
+  )
+)

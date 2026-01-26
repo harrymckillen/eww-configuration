@@ -1,0 +1,124 @@
+$color-primary: #fe3e91;
+$color-white: #ffffff;
+$font-display: "Championship", sans-serif;
+$font-body: "Technology", sans-serif;
+$font-title: "outrun future", sans-serif;
+
+* {
+  all: unset;
+}
+
+.system-monitor-container {
+  .time {
+    &-container {
+      background-color: transparent;
+    }
+
+    &-label {
+      margin-bottom: -260px;
+      padding-bottom: 140px;
+      font-family: $font-display;
+      font-size: 220px;
+      color: $color-white;
+    }
+  }
+
+  .date-label {
+    margin-top: -60px;
+    padding-bottom: 30px;
+    font-family: $font-title;
+    font-size: 56px;
+    color: $color-primary;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);
+  }
+
+  .graph {
+    &-container {
+      font-size: 16px;
+      color: $color-primary;
+
+      &__title {
+        font-family: $font-title;
+        margin-top: 10px;
+        font-size: 26px;
+      }
+
+      &__label {
+        font-family: $font-body;
+        margin-top: 10px;
+      }
+
+      &__box {
+        border: 1px solid $color-primary;
+      }
+    }
+  }
+}
+
+.media-player-container {
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 1px solid $color-primary;
+  padding: 10px;
+  color: $color-primary;
+  border-radius: 15px;
+
+  .media-info {
+    font-family: $font-body;
+    font-size: 18px;
+    margin-top: 14px;
+
+    &__cover-art {
+      border: 1px solid $color-primary;
+      border-radius: 8px;
+    }
+
+    &__italic {
+      font-style: italic;
+    }
+  }
+}
+
+.progress {
+  &-container {
+    margin-top: 10px;
+  }
+
+  &-bar {
+    trough {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 1px;
+      min-height: 2px;
+      min-width: 200px;
+    }
+    progress {
+      background-color: $color-primary;
+      border-radius: 1px;
+      min-height: 2px;
+    }
+  }
+
+  &-time {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-top: 2px;
+  }
+}
+
+.audio-visualiser {
+  border-radius: 8px;
+  border: 1px solid rgba($color-primary, 0.5);
+  padding: 0 6px;
+
+  &-bar {
+    background: repeating-linear-gradient(
+      to top,
+      $color-primary 0px,
+      $color-primary 3px,
+      transparent 3px,
+      transparent 6px
+    );
+    border-radius: 2px 2px 0px 0px;
+    min-height: 2px;
+    transition: height 0.5s ease-out;
+  }
+}
