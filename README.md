@@ -19,7 +19,7 @@
 
 ## Example
 
-[![Watch the video](eww.jpg)](eww.mp4)
+<video src="eww.mp4" width="720" height="480" controls></video>
 
 <!-- ![](eww.mp4) -->
 
