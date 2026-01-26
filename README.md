@@ -9,6 +9,7 @@
 ## Installation
 
 - clone this repo
+- install the fonts within the `fonts/` directory, or modify the CSS to use your own desired fonts
 - copy to `.config/eww/` directory
 - Make scripts executable `chmod a+x *.sh`
 - Run `./eww.sh` to Launch
@@ -16,11 +17,15 @@
 ## Configuration
 
 - You can change the colours and design of the widgets via the CSS etc.
+- Fonts used are included in the repo
+- The `wallpaper.jpeg` is the background I use
 
 ## Example
+
+I use COSMIC DE on Pop_OS! 24.04 currently.
 
 ![EWW Configuration](eww.webp)
 
 ## Known Issues
 
-- Occasionally there is some _stuttering_ with the bars, and it seems to be around the read of the cava output
+- Occasionally there is some _stuttering_ with the bars, and it seems to be around the reading of the raw cava output (my guess anyway)
