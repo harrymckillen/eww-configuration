@@ -2,6 +2,7 @@
 
 # Default JSON output for stopped/no media state
 stopped_json='{"status":"NO_PLAYER","title":"No media playing","artist":"","album":"","artUrl":""}'
+delimiter=$'\x1f'
 
 # Function to output JSON with a given status
 output_json() {
@@ -25,9 +26,9 @@ if ! playerctl -p spotify status &>/dev/null; then
   exit 0
 fi
 
-metadata=$(playerctl -p spotify metadata --format '{{status}}|{{title}}|{{artist}}|{{album}}|{{mpris:artUrl}}|{{ duration(position) }}|{{ duration(mpris:length) }}|{{position}}|{{mpris:length}}' 2>/dev/null)
-
-IFS='|' read -r status title artist album arturl position length positionMicroSec lengthMicrosec <<< "$metadata"
+# metadata=$(playerctl -p spotify metadata --format '{{status}}$'\x1f'{{title}}|{{artist}}$'\x1f'{{album}}$'\x1f'{{mpris:artUrl}}$'\x1f'{{ duration(position) }}$'\x1f'{{ duration(mpris:length) }}$'\x1f'{{position}}$'\x1f'{{mpris:length}}' 2>/dev/null)
+metadata=$(playerctl -p spotify metadata --format "{{status}}${delimiter}{{title}}${delimiter}{{artist}}${delimiter}{{album}}${delimiter}{{mpris:artUrl}}${delimiter}{{ duration(position) }}${delimiter}{{ duration(mpris:length) }}${delimiter}{{position}}${delimiter}{{mpris:length}}" 2>/dev/null)
+IFS=$delimiter read -r status title artist album arturl position length positionMicroSec lengthMicrosec <<< "$metadata"
 
 # Convert length from microseconds to seconds
 lengthSec=$(echo "$lengthMicrosec" | awk '{print $1/1000000}')

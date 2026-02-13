@@ -1,8 +1,9 @@
 $color-primary: #fe3e91;
 $color-white: #ffffff;
-$font-display: "Championship", sans-serif;
+$font-display: "Hyper Viper Gradient", sans-serif;
 $font-body: "Technology", sans-serif;
-$font-title: "outrun future", sans-serif;
+$font-title: "Road Rage", sans-serif;
+$text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);
 
 * {
   all: unset;
@@ -15,11 +16,12 @@ $font-title: "outrun future", sans-serif;
     }
 
     &-label {
-      margin-bottom: -260px;
-      padding-bottom: 140px;
+      margin-bottom: -230px;
+      padding-bottom: 120px;
       font-family: $font-display;
-      font-size: 220px;
+      font-size: 260px;
       color: $color-white;
+      text-shadow: $text-shadow;
     }
   }
 
@@ -27,9 +29,9 @@ $font-title: "outrun future", sans-serif;
     margin-top: -60px;
     padding-bottom: 30px;
     font-family: $font-title;
-    font-size: 56px;
+    font-size: 72px;
     color: $color-primary;
-    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);
+    text-shadow: $text-shadow;
   }
 
   .graph {
@@ -41,6 +43,7 @@ $font-title: "outrun future", sans-serif;
         font-family: $font-title;
         margin-top: 10px;
         font-size: 26px;
+        text-shadow: $text-shadow;
       }
 
       &__label {

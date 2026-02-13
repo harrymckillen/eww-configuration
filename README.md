@@ -24,7 +24,7 @@
 
 I use COSMIC DE on Pop_OS! 24.04 currently.
 
-![EWW Configuration](eww.webp)
+![EWW Configuration](eww.png)
 
 ## Known Issues
 

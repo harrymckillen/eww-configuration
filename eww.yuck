@@ -59,7 +59,7 @@
     ;; Graphs in horizontal layout
     (box :class "graphs-row"
          :orientation "h"
-         :space-evenly false
+         :space-evenly true
          :spacing 40
       
       ;; CPU Graph
