@@ -15,20 +15,31 @@ output_json() {
   local length="${7:-0:00}"
   local positionSec="${8:-0}"
   local lengthSec="${9:-0}"
-  
+
+
 cat << EOF
-{"status":"${status^^}","title":"${title}","artist":"${artist}","album":"${album}","artUrl":"${arturl}","position":"${position}","length":"${length}","positionSec":${positionSec},"lengthSec":${lengthSec}}
+{"status":"${status^^}","title":${title},"artist":${artist},"album":${album},"artUrl":"${arturl}","position":"${position}","length":"${length}","positionSec":${positionSec},"lengthSec":${lengthSec}}
 EOF
 }
+
+# Function to escape for JSON using jq
+json_escape() {
+  jq -Rs . <<< "$1"
+} 
 
 if ! playerctl -p spotify status &>/dev/null; then
   output_json "NO_PLAYER"
   exit 0
 fi
 
-# metadata=$(playerctl -p spotify metadata --format '{{status}}$'\x1f'{{title}}|{{artist}}$'\x1f'{{album}}$'\x1f'{{mpris:artUrl}}$'\x1f'{{ duration(position) }}$'\x1f'{{ duration(mpris:length) }}$'\x1f'{{position}}$'\x1f'{{mpris:length}}' 2>/dev/null)
 metadata=$(playerctl -p spotify metadata --format "{{status}}${delimiter}{{title}}${delimiter}{{artist}}${delimiter}{{album}}${delimiter}{{mpris:artUrl}}${delimiter}{{ duration(position) }}${delimiter}{{ duration(mpris:length) }}${delimiter}{{position}}${delimiter}{{mpris:length}}" 2>/dev/null)
+
+# Read and escape each field
 IFS=$delimiter read -r status title artist album arturl position length positionMicroSec lengthMicrosec <<< "$metadata"
+
+title=$(json_escape "$title")
+artist=$(json_escape "$artist")
+album=$(json_escape "$album")
 
 # Convert length from microseconds to seconds
 lengthSec=$(echo "$lengthMicrosec" | awk '{print $1/1000000}')
